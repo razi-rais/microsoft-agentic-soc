@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Connect the concepts | Agentic Security</title>
+  <style>
+    :root {
+      font-family: Aptos, "Segoe UI", system-ui, sans-serif;
+      color: #172e46; background: #f3f6fa; line-height: 1.5;
+      --navy: #172e46; --muted: #526379; --line: #cdd7e3;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; cursor: pointer; }
+    button:disabled { cursor: default; opacity: .58; }
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid #1465c0; outline-offset: 4px;
+    }
+    [hidden] { display: none !important; }
+    .page { max-width: 1480px; margin: auto; padding: 28px 32px 20px; }
+    .eyebrow {
+      margin: 0 0 8px; color: #5a4888; font-size: .75rem;
+      font-weight: 750; letter-spacing: .14em; text-transform: uppercase;
+    }
+    header { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; }
+    h1 { font-size: clamp(1.8rem, 3vw, 2.65rem); line-height: 1.15; margin: 0 0 10px; letter-spacing: -.035em; }
+    .intro { margin: 0; color: var(--muted); max-width: 780px; }
+    .session-info { text-align: right; white-space: nowrap; color: var(--muted); font-size: .85rem; padding-top: 6px; }
+    .session-info strong { display: block; color: var(--navy); font-size: .95rem; }
+    .author-link { display: inline-block; margin-top: 4px; color: #345b83; font-weight: 650; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .toolbar {
+      display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+      padding: 17px 0; margin-top: 12px;
+    }
+    .progress-block { display: flex; align-items: center; gap: 12px; }
+    .progress-label { font-weight: 700; font-size: .9rem; }
+    progress { width: 110px; height: 8px; border: 0; border-radius: 8px; overflow: hidden; background: #dce5ee; }
+    progress::-webkit-progress-bar { background: #dce5ee; }
+    progress::-webkit-progress-value { background: #10776e; }
+    progress::-moz-progress-bar { background: #10776e; }
+    .placed { color: var(--muted); font-size: .85rem; }
+    .toolbar-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto; }
+    .bottom-actions { margin-top: 20px; }
+    .secondary, .primary, .place {
+      min-height: 44px; border-radius: 9px; font-weight: 650;
+      border: 1px solid var(--line); padding: 9px 16px;
+    }
+    .secondary { background: white; color: var(--navy); }
+    .secondary:hover:not(:disabled) { background: #eaf0f7; }
+    .primary { color: white; background: var(--navy); border-color: var(--navy); }
+    .primary:hover:not(:disabled) { background: #284c6e; }
+    .guide {
+      padding: 13px 16px; border-radius: 10px; background: #e7edf5;
+      color: #344c66; font-size: .875rem; margin-bottom: 20px;
+    }
+    .guide strong { color: var(--navy); }
+    .guide small { display: block; margin-top: 3px; font-size: .8rem; }
+    .topics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .zone {
+      --accent: #aa6513; --tint: #fcf6ec;
+      background: var(--tint); border: 1px solid var(--line);
+      border-top: 4px solid var(--accent); border-radius: 13px;
+      padding: 16px; display: flex; flex-direction: column; min-width: 0;
+      transition: box-shadow .15s, background .15s;
+    }
+    .zone[data-destination="soc"] { --accent: #245fa4; --tint: #eff5fc; }
+    .zone[data-destination="perception"] { --accent: #087c71; --tint: #edf8f5; }
+    .zone[data-destination="mdash"] { --accent: #7850a6; --tint: #f5f0fa; }
+    .zone-head { display: flex; gap: 11px; align-items: flex-start; }
+    .zone-number {
+      background: var(--accent); color: white; border-radius: 8px; flex-shrink: 0;
+      width: 29px; height: 29px; display: grid; place-items: center; font-weight: 750;
+    }
+    h2 { font-size: 1.08rem; margin: 0; line-height: 1.3; }
+    .zone-subtitle { color: var(--muted); font-size: .78rem; margin: 5px 0 0; }
+    .zone .cards { display: grid; gap: 10px; align-content: start; margin: 16px 0 12px; min-height: 109px; flex: 1; }
+    .empty {
+      border: 1px dashed #b6c4d4; border-radius: 9px; margin: 0;
+      min-height: 109px; display: grid; place-content: center;
+      text-align: center; color: #5b6b7d; font-size: .85rem; padding: 12px;
+    }
+    .empty span { font-size: .75rem; margin-top: 3px; }
+    .place { width: 100%; background: white; color: var(--navy); font-size: .8rem; padding: 8px; }
+    .place:hover:not(:disabled) { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 1px var(--accent); }
+    .is-over { box-shadow: 0 0 0 3px #2466b5; }
+    .bank { margin-top: 22px; padding: 19px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+    .bank-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 15px; }
+    .bank-head p { margin: 3px 0 0; color: var(--muted); font-size: .8rem; }
+    .bank .place { width: auto; min-width: 138px; }
+    .bank .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .bank .empty { grid-column: 1 / -1; min-height: 70px; border: 0; background: #f3f6fa; }
+    .card {
+      display: block; text-align: left; width: 100%; min-width: 0;
+      padding: 13px 14px; background: white; color: var(--navy);
+      border: 1px solid #c5d0de; border-radius: 9px; font-size: .88rem;
+      line-height: 1.45; box-shadow: 0 2px 3px #172e4608;
+      position: relative; overflow-wrap: anywhere;
+    }
+    .card[draggable="true"] { cursor: grab; }
+    .card[draggable="true"]:active { cursor: grabbing; }
+    .card:hover:not([aria-disabled="true"]) { border-color: #4270a2; box-shadow: 0 3px 8px #172e4614; }
+    .card[aria-pressed="true"] { outline: 3px solid #2466b5; outline-offset: 1px; background: #eef5ff; }
+    .card-top { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: .67rem; font-weight: 750; letter-spacing: .065em; color: #596c83; text-transform: uppercase; }
+    .grip { display: inline-block; width: 7px; height: 11px; background: radial-gradient(circle, #718299 1px, transparent 1.5px) 0 0 / 4px 4px; }
+    .card.correct { border: 2px solid #228354; background: #e8f7ee; cursor: default; }
+    .card.correct .card-top { color: #17664d; }
+    .card.retry { border: 2px solid #c43832; background: #fff0ef; }
+    .card.retry .card-top { color: #a3211b; }
+    .status-icon {
+      display: inline-grid; place-items: center; flex-shrink: 0;
+      width: 23px; height: 23px; border-radius: 50%;
+      color: white; font-size: 16px; font-weight: 800; line-height: 1;
+      background: #187347; letter-spacing: 0;
+    }
+    .retry .status-icon { background: #b42318; }
+    .feedback { display: block; margin-top: 9px; padding-top: 9px; border-top: 1px solid #d5e0dc; font-size: .78rem; color: #375548; }
+    .retry .feedback { color: #8c2822; border-color: #edb6b1; }
+    .topic-reference { display: block; margin-top: 8px; font-size: .72rem; font-weight: 650; }
+    #announcement { margin: 13px 0 0; min-height: 24px; color: #244b6a; font-size: .9rem; font-weight: 600; }
+    .completion { background: #e8f5ef; border: 1px solid #8db9a5; border-radius: 13px; padding: 24px; margin-top: 22px; }
+    .completion h2 { font-size: 1.5rem; }
+    .completion > p { margin: 9px 0 18px; color: #35574a; }
+    .takeaways { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin: 0; }
+    .takeaways dt { font-weight: 750; margin-bottom: 6px; font-size: .9rem; }
+    .takeaways dd { margin: 0; font-size: .85rem; color: #35574a; }
+    .reset-confirm { background: #fff4dc; border: 1px solid #cda86a; border-radius: 10px; padding: 16px; margin: 0 0 18px; }
+    .reset-confirm p { margin: 0 0 12px; }
+    .reset-confirm button { margin-right: 8px; }
+    footer { margin-top: 28px; padding-top: 17px; border-top: 1px solid var(--line); font-size: .78rem; color: var(--muted); }
+    .brand-panel { display: flex; align-items: center; gap: 16px; padding: 21px 24px; background: #fff; border: 1px solid var(--line); border-left: 4px solid #087c71; border-radius: 12px; }
+    .brand-mark { display: grid; place-items: center; flex-shrink: 0; width: 46px; height: 46px; border-radius: 12px; background: #172e46; color: white; font-size: 1rem; font-weight: 750; letter-spacing: .04em; }
+    .brand-copy { flex: 1; min-width: 0; }
+    .brand-copy .brand-name { margin: 0; font-size: 1.15rem; font-weight: 750; color: var(--navy); }
+    .brand-copy p { margin: 4px 0 0; font-size: .85rem; }
+    .brand-action { flex-shrink: 0; text-align: center; }
+    .brand-link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 18px; border-radius: 9px; background: var(--navy); color: white; font-weight: 650; font-size: .85rem; text-decoration: none; }
+    .brand-link:hover { background: #284c6e; }
+    .brand-address { display: block; margin-top: 6px; font-size: .72rem; }
+    .privacy-note { margin: 13px 0 0; text-align: center; font-size: .72rem; }
+    noscript p { padding: 25px; background: #fff4dc; border: 1px solid #b17a25; }
+    @media (max-width: 1090px) {
+      .topics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .zone .cards, .empty { min-height: 75px; }
+      .bank .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .takeaways { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .page { padding: 20px 16px; }
+      header { display: block; }
+      .session-info { text-align: left; padding-top: 12px; }
+      .session-info strong { display: inline; margin-right: 6px; }
+      .toolbar { gap: 10px; }
+      .toolbar-buttons { margin-left: 0; }
+      .progress-block { flex: 1 1 100%; }
+      .placed { flex: 1; }
+      .topics, .bank .cards, .takeaways { grid-template-columns: 1fr; }
+      .bank-head { align-items: flex-start; flex-wrap: wrap; }
+      .brand-panel { flex-wrap: wrap; padding: 18px; gap: 12px; }
+      .brand-action { width: 100%; }
+      .brand-link { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    @media print {
+      body { background: white; }
+      .guide, .toolbar, .place, .bottom-actions, #announcement, .reset-confirm { display: none !important; }
+      .page { padding: 0; }
+      .topics { grid-template-columns: repeat(2, 1fr); }
+      .zone, .card, .completion { break-inside: avoid; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <p class="eyebrow">Concept check</p>
+        <h1>Connect the concepts.</h1>
+        <p class="intro">Four topics. Twelve statements. Match each statement to its best fit, from today’s challenges to the role of each product.</p>
+      </div>
+      <div class="session-info"><strong>Agentic AI Security</strong>MDASH and Project Perception<br><a class="author-link" href="https://razibinrais.com" target="_blank" rel="noopener noreferrer" aria-label="Razi Rais website (opens in a new tab)">Razi Rais</a></div>
+    </header>
+    <noscript><p>This activity needs JavaScript enabled in your browser. It works offline and does not upload your answers.</p></noscript>
+    <main id="activity" hidden>
+      <div class="toolbar">
+        <div class="progress-block">
+          <label for="progress" class="progress-label" id="progress-label">0 of 12 confirmed</label>
+          <progress id="progress" value="0" max="12"></progress>
+        </div>
+        <span class="placed" id="placed">0 of 12 placed</span>
+        <div class="toolbar-buttons">
+          <button class="secondary" id="reset" type="button">Reset</button>
+        </div>
+      </div>
+      <div class="reset-confirm" id="reset-confirm" role="region" aria-label="Confirm restart" hidden>
+        <p>Clear your matches and feedback, then shuffle the cards for a fresh attempt?</p>
+        <button type="button" class="primary" id="confirm-reset">Restart activity</button>
+        <button type="button" class="secondary" id="cancel-reset">Keep playing</button>
+      </div>
+      <div class="guide" id="instructions">
+        <strong>Drag a card into a topic, or select a card and choose “Place selected card” under a topic.</strong>
+        <small>Each placement gives instant feedback: a green tick means correct, a red cross means try again. Read the explanation to understand why.</small>
+        <small>Use three cards per topic. Distinguish the problem, the operating model and the product responsibilities.
+          Keyboard: Tab and Enter select a card, then 1 to 4 choose a topic. Press 0 to return it or Escape to deselect.</small>
+      </div>
+      <div class="topics" aria-label="Four topic destinations">
+        <section class="zone" data-destination="challenges" aria-labelledby="heading-challenges">
+          <div class="zone-head"><span class="zone-number" aria-hidden="true">1</span><div><h2 id="heading-challenges">Today’s SOC challenges</h2><p class="zone-subtitle">The need for change</p></div></div>
+          <div class="cards" id="cards-challenges"></div>
+          <button type="button" class="place" id="place-challenges" data-place="challenges" aria-label="Place selected card in Today’s SOC challenges">Place selected card</button>
+        </section>
+        <section class="zone" data-destination="soc" aria-labelledby="heading-soc">
+          <div class="zone-head"><span class="zone-number" aria-hidden="true">2</span><div><h2 id="heading-soc">Agentic SOC</h2><p class="zone-subtitle">The operating model</p></div></div>
+          <div class="cards" id="cards-soc"></div>
+          <button type="button" class="place" id="place-soc" data-place="soc" aria-label="Place selected card in Agentic SOC">Place selected card</button>
+        </section>
+        <section class="zone" data-destination="perception" aria-labelledby="heading-perception">
+          <div class="zone-head"><span class="zone-number" aria-hidden="true">3</span><div><h2 id="heading-perception">Project Perception</h2><p class="zone-subtitle">Coordinating security operations</p></div></div>
+          <div class="cards" id="cards-perception"></div>
+          <button type="button" class="place" id="place-perception" data-place="perception" aria-label="Place selected card in Project Perception">Place selected card</button>
+        </section>
+        <section class="zone" data-destination="mdash" aria-labelledby="heading-mdash">
+          <div class="zone-head"><span class="zone-number" aria-hidden="true">4</span><div><h2 id="heading-mdash">MDASH</h2><p class="zone-subtitle">Analyzing code security</p></div></div>
+          <div class="cards" id="cards-mdash"></div>
+          <button type="button" class="place" id="place-mdash" data-place="mdash" aria-label="Place selected card in MDASH">Place selected card</button>
+        </section>
+      </div>
+      <section class="bank" data-destination="pool" aria-labelledby="bank-title">
+        <div class="bank-head">
+          <div><h2 id="bank-title">Your statement cards</h2><p id="bank-detail">Select or drag a card to get started.</p></div>
+          <button type="button" class="place" id="place-pool" data-place="pool">Return selected card</button>
+        </div>
+        <div class="cards" id="cards-pool"></div>
+      </section>
+      <div class="bottom-actions">
+        <button class="primary" id="show-answers" type="button">Show answers</button>
+      </div>
+      <p id="announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+      <section class="completion" id="completion" aria-labelledby="completion-title" hidden>
+        <h2 id="completion-title" tabindex="-1">All four concepts connected.</h2>
+        <p id="completion-score"></p>
+        <dl class="takeaways">
+          <div><dt>Today’s challenges</dt><dd>Explain why teams need better context, prioritization and coordination.</dd></div>
+          <div><dt>Agentic SOC</dt><dd>Describes bounded, adaptive work with human authority and accountability.</dd></div>
+          <div><dt>Project Perception</dt><dd>Coordinates specialized agents and evidence across security operations.</dd></div>
+          <div><dt>MDASH</dt><dd>Focuses on code vulnerabilities, validated findings and reviewed remediation.</dd></div>
+        </dl>
+      </section>
+    </main>
+    <footer>
+      <section class="brand-panel" aria-label="Connect with Razi Rais">
+        <div class="brand-mark" aria-hidden="true">RR</div>
+        <div class="brand-copy">
+          <p class="brand-name">Razi Rais</p>
+          <p>Keep the conversation going. Explore more on AI security and practical architecture.</p>
+        </div>
+        <div class="brand-action">
+          <a class="brand-link" href="https://razibinrais.com" target="_blank" rel="noopener noreferrer" aria-label="Connect with Razi Rais on his website (opens in a new tab)">Connect with Razi</a>
+          <span class="brand-address">razibinrais.com</span>
+        </div>
+      </section>
+      <p class="privacy-note">Works offline. No answers are uploaded. Refreshing clears progress.</p>
+    </footer>
+  </div>
+  <script>
+    "use strict";
+    const topics = {
+      challenges: "Today’s SOC challenges", soc: "Agentic SOC",
+      perception: "Project Perception", mdash: "MDASH", pool: "the statement cards"
+    };
+    const cards = [
+      { id: "c01", topic: "challenges", text: "Evidence is scattered across tools, making the full security picture harder to assemble.",
+        connection: "SOC investigation workflow",
+        why: "Fragmented evidence is a current operational challenge, not an agent capability." },
+      { id: "c02", topic: "challenges", text: "Repetitive triage and manual handoffs slow the path from an alert to a decision.",
+        connection: "SOC investigation workflow",
+        why: "Repeated manual work and handoffs explain the need for better coordination." },
+      { id: "c03", topic: "challenges", text: "Teams struggle to prioritize which issues deserve attention first.",
+        connection: "Playbook coordination and evidence",
+        why: "Prioritization is a problem to solve. Producing a prioritized result is a separate capability." },
+      { id: "c04", topic: "soc", text: "Delegates bounded security tasks rather than relying only on individual prompts.",
+        connection: "SOC operating models",
+        why: "Agentic SOC is an operating model for delegated work within explicit scope." },
+      { id: "c05", topic: "soc", text: "Adapts investigation steps as new evidence changes what should happen next.",
+        connection: "SOC operating models",
+        why: "Adaptive planning distinguishes agentic work from a purely scripted workflow." },
+      { id: "c06", topic: "soc", text: "Retains human authority and accountability while agents perform delegated work.",
+        connection: "SOC operating models and action authority",
+        why: "Human accountability is a governing principle of the agentic SOC operating model, not an exclusive product feature. Delegation does not grant unlimited authority." },
+      { id: "c07", topic: "perception", text: "Coordinates specialized security agents through shared context and playbooks.",
+        connection: "Project Perception overview",
+        why: "Project Perception applies agent coordination to security operations through shared context and playbooks." },
+      { id: "c08", topic: "perception", text: "Connects investigation, exposure assessment and detection authoring.",
+        connection: "Agent roles and supported scope",
+        why: "These responsibilities belong to Project Perception’s operational security scope." },
+      { id: "c09", topic: "perception", text: "Produces operational findings and candidate detections for human review.",
+        connection: "Playbook coordination and evidence",
+        why: "Perception can produce findings and candidate detections. Producing an artifact is not permission to deploy it." },
+      { id: "c10", topic: "mdash", text: "Analyzes source code for potential software vulnerabilities.",
+        connection: "Product responsibilities and MDASH overview",
+        why: "MDASH focuses on code analysis and potential software vulnerabilities." },
+      { id: "c11", topic: "mdash", text: "Validates and consolidates code findings before human triage.",
+        connection: "MDASH analysis pipeline",
+        why: "MDASH validates and deduplicates findings to support an evidence based reviewer decision." },
+      { id: "c12", topic: "mdash", text: "Supports code fixes that still require human review and verification.",
+        connection: "Remediation and verification",
+        why: "MDASH supports code remediation. A generated patch alone does not establish that a fix is safe." }
+    ];
+    const byId = new Map(cards.map(card => [card.id, card]));
+    let order, locations, feedback, locked, selected, dragging, attempts, firstMatches, answersRevealed;
+    const $ = id => document.getElementById(id);
+    const placedCount = () => cards.filter(card => locations[card.id]).length;
+
+    function announce(message) { $("announcement").textContent = message; }
+    function focusElement(id) { $(id)?.focus(); }
+
+    function initialize() {
+      order = cards.map(card => card.id);
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      locations = {}; feedback = {}; locked = new Set();
+      selected = null; dragging = null; attempts = 0; firstMatches = {};
+      answersRevealed = false;
+      $("reset-confirm").hidden = true;
+      render();
+    }
+
+    function makeCard(card) {
+      const element = document.createElement("button");
+      const status = feedback[card.id];
+      element.type = "button";
+      element.id = `card-${card.id}`;
+      element.dataset.card = card.id;
+      element.className = `card${status ? ` ${status}` : ""}`;
+      element.draggable = !locked.has(card.id);
+      element.setAttribute("aria-pressed", String(selected === card.id));
+      element.setAttribute("aria-disabled", String(locked.has(card.id)));
+      const top = document.createElement("span");
+      top.className = "card-top";
+      if (status) {
+        const icon = document.createElement("span");
+        icon.className = "status-icon";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = status === "correct" ? "✓" : "✕";
+        top.append(icon);
+      } else {
+        const grip = document.createElement("span");
+        grip.className = "grip";
+        grip.setAttribute("aria-hidden", "true");
+        top.append(grip);
+      }
+      top.append(status === "correct" ? "Correct match" : status === "retry" ? "Incorrect match · Try again" : selected === card.id ? "Selected" : "Match this statement");
+      const text = document.createElement("span");
+      text.textContent = card.text;
+      element.append(top, text);
+      if (status) {
+        const explanation = document.createElement("span");
+        explanation.className = "feedback";
+        explanation.textContent = status === "correct"
+          ? card.why
+          : `The best fit is ${topics[card.topic]}, not ${topics[locations[card.id]]}. ${card.why}`;
+        const reference = document.createElement("span");
+        reference.className = "topic-reference";
+        reference.textContent = `Topic connection: ${card.connection}.`;
+        explanation.append(reference);
+        element.append(explanation);
+      }
+      return element;
+    }
+
+    function render(focusId) {
+      for (const topic of Object.keys(topics)) {
+        const container = $(`cards-${topic}`);
+        const members = order.filter(id => (locations[id] || "pool") === topic);
+        container.replaceChildren(...members.map(id => makeCard(byId.get(id))));
+        if (!members.length) {
+          const empty = document.createElement("p");
+          empty.className = "empty";
+          empty.textContent = topic === "pool"
+            ? locked.size === cards.length ? "Every card has a confirmed match." : "All cards placed. Move the red cards to their correct topics."
+            : "Drop statements here";
+          if (topic !== "pool") {
+            const detail = document.createElement("span");
+            detail.textContent = "Three statements belong here";
+            empty.append(detail);
+          }
+          container.append(empty);
+        }
+        $(`place-${topic}`).disabled = !selected;
+      }
+      const placed = placedCount();
+      const complete = locked.size === cards.length;
+      $("progress").value = locked.size;
+      $("progress-label").textContent = answersRevealed ? "12 of 12 answers shown" : `${locked.size} of 12 confirmed`;
+      $("placed").textContent = `${placed} of 12 placed`;
+      $("show-answers").disabled = complete;
+      $("bank-detail").textContent = selected ? "A card is selected. Choose a topic, or press its number."
+        : "Each placement is checked immediately. Green matches stay locked. Red cards can be moved.";
+      $("completion").hidden = !complete;
+      $("completion-title").textContent = answersRevealed ? "Answers revealed." : "All four concepts connected.";
+      if (complete) {
+        const firstScore = Object.values(firstMatches).filter(Boolean).length;
+        $("completion-score").textContent = answersRevealed
+          ? "All twelve statements are in their correct topics with explanations. This is an answer reveal, not a scored attempt. Select Reset to try it yourself."
+          : `12 of 12 confirmed. ${firstScore} of 12 matched correctly on the first placement. ${attempts} topic placements in total.`;
+      }
+      if (focusId) focusElement(focusId);
+    }
+
+    function selectCard(id) {
+      if (locked.has(id)) { announce("This match is confirmed and stays locked."); return; }
+      selected = selected === id ? null : id;
+      render(`card-${id}`);
+      announce(selected ? "Card selected. Choose a topic, or use keys 1 to 4. Press 0 to return it to the card bank." : "Card deselected.");
+    }
+
+    function moveCard(id, destination) {
+      if (!byId.has(id) || !Object.hasOwn(topics, destination) || locked.has(id)) return;
+      if ((locations[id] || "pool") === destination) {
+        announce(`That card is already in ${topics[destination]}.`);
+        return;
+      }
+      // Allow temporary overfilling so participants can exchange two misplaced cards.
+      if (destination === "pool") {
+        delete locations[id];
+        delete feedback[id];
+      } else {
+        locations[id] = destination;
+        const correct = byId.get(id).topic === destination;
+        feedback[id] = correct ? "correct" : "retry";
+        attempts++;
+        if (!Object.hasOwn(firstMatches, id)) firstMatches[id] = correct;
+        if (correct) locked.add(id);
+      }
+      selected = null;
+      render(`card-${id}`);
+      if (locked.size === cards.length) {
+        announce("All twelve matches are correct. Review the four key takeaways below.");
+        $("completion-title").focus();
+      } else if (destination === "pool") {
+        announce("Card returned to the statement cards. Choose another topic when ready.");
+      } else {
+        const card = byId.get(id);
+        announce(feedback[id] === "correct"
+          ? `Correct. ${card.why} ${locked.size} of 12 confirmed.`
+          : `Incorrect. The best fit is ${topics[card.topic]}. ${card.why} Move the card to try again.`);
+      }
+    }
+
+    $("activity").addEventListener("click", event => {
+      const card = event.target.closest("[data-card]");
+      if (card) { selectCard(card.dataset.card); return; }
+      const destination = event.target.closest("[data-place]");
+      if (destination && selected) moveCard(selected, destination.dataset.place);
+    });
+
+    $("activity").addEventListener("dragstart", event => {
+      const card = event.target.closest("[data-card]");
+      if (!card || locked.has(card.dataset.card)) { event.preventDefault(); return; }
+      dragging = card.dataset.card;
+      event.dataTransfer.setData("text/plain", dragging);
+      event.dataTransfer.effectAllowed = "move";
+    });
+    function clearDropHighlights() {
+      document.querySelectorAll(".is-over").forEach(element => element.classList.remove("is-over"));
+    }
+    $("activity").addEventListener("dragover", event => {
+      const zone = event.target.closest("[data-destination]");
+      if (!zone || !dragging) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      clearDropHighlights();
+      zone.classList.add("is-over");
+    });
+    $("activity").addEventListener("dragleave", event => {
+      const zone = event.target.closest("[data-destination]");
+      if (zone && !zone.contains(event.relatedTarget)) zone.classList.remove("is-over");
+    });
+    $("activity").addEventListener("drop", event => {
+      const zone = event.target.closest("[data-destination]");
+      if (!zone || !dragging) return;
+      event.preventDefault();
+      const id = event.dataTransfer.getData("text/plain");
+      if (id === dragging) moveCard(id, zone.dataset.destination);
+      dragging = null;
+      clearDropHighlights();
+    });
+    document.addEventListener("dragend", () => { dragging = null; clearDropHighlights(); });
+    document.addEventListener("keydown", event => {
+      if (!selected || event.altKey || event.ctrlKey || event.metaKey || !$("reset-confirm").hidden) return;
+      const destinations = { "0": "pool", "1": "challenges", "2": "soc", "3": "perception", "4": "mdash" };
+      if (Object.hasOwn(destinations, event.key)) {
+        event.preventDefault();
+        moveCard(selected, destinations[event.key]);
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        const id = selected;
+        selected = null;
+        render(`card-${id}`);
+        announce("Card deselected.");
+      }
+    });
+
+    $("show-answers").addEventListener("click", () => {
+      if ($("show-answers").disabled) return;
+      for (const card of cards) {
+        locations[card.id] = card.topic;
+        feedback[card.id] = "correct";
+        locked.add(card.id);
+      }
+      answersRevealed = true;
+      selected = null;
+      dragging = null;
+      $("reset-confirm").hidden = true;
+      clearDropHighlights();
+      render(`card-${order[0]}`);
+      announce("All answers revealed and placed in their correct topics. This is not a scored attempt. Select Reset to start again.");
+    });
+    $("reset").addEventListener("click", () => {
+      $("reset-confirm").hidden = false;
+      focusElement("cancel-reset");
+    });
+    $("cancel-reset").addEventListener("click", () => {
+      $("reset-confirm").hidden = true;
+      focusElement("reset");
+    });
+    $("confirm-reset").addEventListener("click", () => {
+      initialize();
+      announce("Activity restarted. All twelve cards have been shuffled.");
+      focusElement(`card-${order[0]}`);
+    });
+    initialize();
+    $("activity").hidden = false;
+  </script>
+</body>
+</html>
