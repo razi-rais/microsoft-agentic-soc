@@ -19,9 +19,9 @@ The Contoso example shows how application security findings and incident evidenc
 | Resource | Purpose |
 |---|---|
 | [Contoso case study](case-study/contoso-mdash-perception-case-study.pdf) | Follow the existing SOC workflow, understand its operational pain, and examine the proposed agentic transformation through annotated architecture and decision points. |
-| [Interactive activity](activity/index.html) | Reinforce the session concepts through a drag and drop matching exercise. |
+| [Interactive activity](https://razi-rais.github.io/microsoft-agentic-soc/activity/) | Reinforce the session concepts through a drag and drop matching exercise. |
 
-Start with the case study, then complete the activity. To use the interactive activity locally, download or clone the repository and open `activity/index.html` in your browser.
+Start with the case study, then [open the interactive activity in your browser](https://razi-rais.github.io/microsoft-agentic-soc/activity/). No download is required. You can also run the activity locally by downloading or cloning the repository and opening `activity/index.html` in your browser.
 
 The Contoso scenario is fictional. Its proposed integration does not imply a native connection between MDASH and Project Perception.
 
